@@ -241,7 +241,7 @@ export default function Home() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4 }}
-            className="flex flex-col items-center min-h-screen px-6 pt-10 pb-8"
+            className="flex flex-col items-center justify-center min-h-screen px-6 py-8"
           >
             {/* What's ?? your Journey */}
             <div className="flex flex-col items-center gap-0 mb-2">
