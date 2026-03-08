@@ -203,10 +203,23 @@ export default function Home() {
   const handleSaveImage = async () => {
     if (!resultRef.current) return;
     try {
+      const images = resultRef.current.querySelectorAll("img");
+      await Promise.all(
+        Array.from(images).map(
+          (img) =>
+            new Promise<void>((resolve) => {
+              if (img.complete) return resolve();
+              img.onload = () => resolve();
+              img.onerror = () => resolve();
+            })
+        )
+      );
       const canvas = await html2canvas(resultRef.current, {
         backgroundColor: "#FFF8DC",
         scale: 2,
         useCORS: true,
+        allowTaint: true,
+        logging: false,
       });
       const link = document.createElement("a");
       link.download = "jory-quiz-result.png";
@@ -493,7 +506,7 @@ export default function Home() {
               className="w-full bg-[#FFF8DC] flex flex-col items-center gap-2 pb-6 px-4"
             >
               {/* Your RESULT! header */}
-              <div className="flex flex-col items-start self-start mb-1">
+              <div className="flex flex-col items-center mb-1">
                 <Image
                   src="/assets/ui/your_result.png"
                   alt="Your"
