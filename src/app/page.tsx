@@ -503,17 +503,19 @@ export default function Home() {
           >
             <div
               ref={resultRef}
-              className="w-full bg-[#FFF8DC] flex flex-col items-center gap-2 pb-6 px-4"
+              className="w-full bg-[#FFF8DC] flex flex-col items-center gap-2 pt-4 pb-6 px-4"
             >
               {/* Your RESULT! header */}
               <div className="flex flex-col items-center mb-1">
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src="/assets/ui/your_result.png"
                   alt="Your"
                   width={132}
                   height={35}
                 />
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src="/assets/ui/result-text.png"
                   alt="RESULT!"
                   width={203}
@@ -523,17 +525,18 @@ export default function Home() {
               </div>
 
               {/* Animal image with flower background (from UXUI) */}
-              <div className="relative w-56 h-56 my-2">
-                <Image
+              <div className="w-56 h-56 my-2 flex items-center justify-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={resultsData[result].animalImage}
                   alt={resultsData[result].animalTh}
-                  fill
-                  className="object-contain drop-shadow-lg"
+                  className="w-full h-full object-contain drop-shadow-lg"
                 />
               </div>
 
               {/* "you are" text */}
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src="/assets/ui/your are.png"
                 alt="you are"
                 width={160}
