@@ -221,10 +221,34 @@ export default function Home() {
         allowTaint: true,
         logging: false,
       });
-      const link = document.createElement("a");
-      link.download = "jory-quiz-result.png";
-      link.href = canvas.toDataURL("image/png");
-      link.click();
+
+      // Try Web Share API first (works in Instagram in-app browser)
+      if (navigator.share && navigator.canShare) {
+        canvas.toBlob(async (blob) => {
+          if (!blob) return;
+          const file = new File([blob], "jory-quiz-result.png", {
+            type: "image/png",
+          });
+          const shareData = { files: [file] };
+          if (navigator.canShare(shareData)) {
+            try {
+              await navigator.share(shareData);
+              return;
+            } catch {
+              // User cancelled or share failed, fallback below
+            }
+          }
+          // Fallback: open image in new tab
+          const url = URL.createObjectURL(blob);
+          window.open(url, "_blank");
+        }, "image/png");
+      } else {
+        // Fallback: direct download
+        const link = document.createElement("a");
+        link.download = "jory-quiz-result.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      }
     } catch (err) {
       console.error("Failed to save image:", err);
     }
@@ -501,9 +525,11 @@ export default function Home() {
             transition={{ duration: 0.5 }}
             className="flex flex-col items-center min-h-screen px-5 pt-2 pb-6"
           >
+            {/* ===== Capture area for Story (9:16) ===== */}
             <div
               ref={resultRef}
-              className="w-full bg-[#FFF8DC] flex flex-col items-center gap-2 pt-4 pb-6 px-4"
+              className="w-full bg-[#FFF8DC] flex flex-col items-center gap-2 pt-6 pb-8 px-6"
+              style={{ aspectRatio: "9/16", maxHeight: "80vh" }}
             >
               {/* Your RESULT! header */}
               <div className="flex flex-col items-center mb-1">
@@ -525,7 +551,7 @@ export default function Home() {
               </div>
 
               {/* Animal image with flower background (from UXUI) */}
-              <div className="w-56 h-56 my-2 flex items-center justify-center">
+              <div className="w-44 h-44 my-1 flex items-center justify-center flex-shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={resultsData[result].animalImage}
@@ -539,13 +565,13 @@ export default function Home() {
               <img
                 src="/assets/ui/your are.png"
                 alt="you are"
-                width={160}
-                height={34}
-                className="mt-2"
+                width={140}
+                height={30}
+                className="mt-1"
               />
 
               {/* Animal name */}
-              <h2 className="font-[family-name:var(--font-playfair)] text-2xl font-bold mt-1" style={{ color: resultsData[result].nameColor }}>
+              <h2 className="font-[family-name:var(--font-playfair)] text-2xl font-bold mt-0.5" style={{ color: resultsData[result].nameColor }}>
                 &ldquo;{resultsData[result].animalTh}&rdquo;
               </h2>
 
@@ -559,19 +585,23 @@ export default function Home() {
                 &ldquo; {resultsData[result].scent} &rdquo;
               </p>
 
-              {/* Description paragraphs */}
-              <div className="text-center mt-4 space-y-4 px-2">
+              {/* Short description for story */}
+              <div className="text-center mt-2 space-y-2 px-2 flex-1 flex flex-col justify-center">
                 <p className="font-[family-name:var(--font-poppins)] text-[#4877AF] text-sm leading-relaxed font-bold">
                   คุณคือ {resultsData[result].animalTh} เหมาะกับ{" "}
                   {resultsData[result].perfumeName}
                 </p>
-                <p className="font-[family-name:var(--font-poppins)] text-[#4877AF] text-sm leading-loose">
+                <p className="font-[family-name:var(--font-poppins)] text-[#4877AF] text-xs leading-relaxed">
                   {resultsData[result].description1}
                 </p>
-                <p className="font-[family-name:var(--font-poppins)] text-[#4877AF] text-sm leading-loose">
-                  {resultsData[result].description2}
-                </p>
               </div>
+            </div>
+
+            {/* ===== Full description (outside capture) ===== */}
+            <div className="w-full text-center mt-4 space-y-3 px-4">
+              <p className="font-[family-name:var(--font-poppins)] text-[#4877AF] text-sm leading-loose">
+                {resultsData[result].description2}
+              </p>
             </div>
 
             {/* Action buttons */}
